@@ -1,9 +1,9 @@
-[14.04.2026 15:08] Иван Двизов: # -*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 import copy
 
 # --- Базовый класс ---
 class Piece:
-    def init(self, color, row, col):
+    def __init__(self, color, row, col):
         self.color = color
         self.row = row
         self.col = col
@@ -16,13 +16,13 @@ class Piece:
         self.row = r
         self.col = c
 
-    def repr(self):
+    def __repr__(self):
         return self.symbol
 
 # --- Стандартные фигуры ---
 class King(Piece):
-    def init(self, color, r, c):
-        super().init(color, r, c)
+    def __init__(self, color, r, c):
+        super().__init__(color, r, c)
         self.symbol = 'K' if color == 'white' else 'k'
 
     def get_moves(self, board):
@@ -38,8 +38,8 @@ class King(Piece):
         return moves
 
 class Queen(Piece):
-    def init(self, color, r, c):
-        super().init(color, r, c)
+    def __init__(self, color, r, c):
+        super().__init__(color, r, c)
         self.symbol = 'Q' if color == 'white' else 'q'
 
     def get_moves(self, board):
@@ -58,8 +58,8 @@ class Queen(Piece):
         return moves
 
 class Knight(Piece):
-    def init(self, color, r, c):
-        super().init(color, r, c)
+    def __init__(self, color, r, c):
+        super().__init__(color, r, c)
         self.symbol = 'N' if color == 'white' else 'n'
 
     def get_moves(self, board):
@@ -73,8 +73,8 @@ class Knight(Piece):
         return moves
 
 class Pawn(Piece):
-    def init(self, color, r, c):
-        super().init(color, r, c)
+    def __init__(self, color, r, c):
+        super().__init__(color, r, c)
         self.symbol = 'P' if color == 'white' else 'p'
         self.dir = -1 if color == 'white' else 1
 
@@ -103,8 +103,8 @@ class Pawn(Piece):
 # --- НОВЫЕ ФИГУРЫ (3 балла) ---
 class Guardian(Piece):
     """Страж: ходит как король, но на 2 клетки"""
-    def init(self, color, r, c):
-        super().init(color, r, c)
+    def __init__(self, color, r, c):
+        super().__init__(color, r, c)
         self.symbol = 'G' if color == 'white' else 'g'
 
     def get_moves(self, board):
@@ -118,10 +118,11 @@ class Guardian(Piece):
                     if target is None or target.color != self.color:
                         moves.append((r, c))
         return moves
-[14.04.2026 15:08] Иван Двизов: class Archer(Piece):
+
+class Archer(Piece):
     """Лучник: как слон, но не дальше 3 клеток"""
-    def init(self, color, r, c):
-        super().init(color, r, c)
+    def __init__(self, color, r, c):
+        super().__init__(color, r, c)
         self.symbol = 'A' if color == 'white' else 'a'
 
     def get_moves(self, board):
@@ -139,8 +140,8 @@ class Guardian(Piece):
 
 class Mage(Piece):
     """Маг: телепорт на любую пустую клетку того же цвета"""
-    def init(self, color, r, c):
-        super().init(color, r, c)
+    def __init__(self, color, r, c):
+        super().__init__(color, r, c)
         self.symbol = 'M' if color == 'white' else 'm'
 
     def get_moves(self, board):
@@ -154,7 +155,7 @@ class Mage(Piece):
 
 # --- Логика доски ---
 class Board:
-    def init(self):
+    def __init__(self):
         self.grid = [[None for _ in range(8)] for _ in range(8)]
         self.ep_target = None # Клетка для взятия на проходе
         self.setup()
@@ -201,7 +202,7 @@ class Board:
 
 # --- Управление игрой ---
 class Game:
-    def init(self):
+    def __init__(self):
         self.board = Board()
         self.turn = 'white'
         self.history = []
@@ -232,7 +233,8 @@ class Game:
         self.board.grid[e_rc[0]][e_rc[1]] = p
         self.board.grid[s_rc[0]][s_rc[1]] = None
         p.move_to(e_rc[0], e_rc[1])
-[14.04.2026 15:08] Иван Двизов: # Проверка шаха самому себе
+
+        # Проверка шаха самому себе
         if self.board.is_check(self.turn):
             print("Король под ударом!")
             self.board.grid, self.board.ep_target, self.turn = prev_state[0], prev_state[1], prev_state[2]
@@ -276,5 +278,5 @@ class Game:
             elif len(cmd) == 2:
                 self.move(cmd[0], cmd[1])
 
-if name == "main":
+if __name__ == "__main__":
     Game().run()
